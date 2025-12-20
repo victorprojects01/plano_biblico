@@ -4,42 +4,50 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta name="theme-color" content="#556B2F" />
+    <meta name="theme-color" content="#6366F1" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="description" content="Um plano de leitura bíblica anual para 2026 com foco em simplicidade e constância." />
-    <title>Reading Saves - Plano 2026</title>
+    <title>Save - Plano Anual 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
       :root {
-        --brand-green: #556B2F;
-        --brand-beige: #FDFBF7;
-        --brand-gold: #D4AF37;
+        --primary: #6366F1;
+        --secondary: #EC4899;
+        --accent: #06B6D4;
+        --bg: #F8FAFC;
       }
       body {
-        font-family: 'Inter', sans-serif;
-        background-color: var(--brand-beige);
-        color: #3D3D3D;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: var(--bg);
+        color: #1E293B;
         -webkit-tap-highlight-color: transparent;
+        overflow-x: hidden;
       }
-      h1, h2, h3, .font-serif {
-        font-family: 'Cormorant+Garamond', serif;
+      .glass {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
       }
-      .safe-bottom {
-        padding-bottom: env(safe-area-inset-bottom);
+      .btn-glow {
+        box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4);
       }
-      ::-webkit-scrollbar {
-        width: 6px;
+      .day-card-glow {
+        box-shadow: 0 0 15px rgba(99, 102, 241, 0.1);
       }
-      ::-webkit-scrollbar-track {
-        background: var(--brand-beige);
+      .day-card-active-glow {
+        box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
       }
-      ::-webkit-scrollbar-thumb {
-        background: #E8E1D5;
-        border-radius: 10px;
+      @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+        100% { transform: translateY(0px); }
+      }
+      .float-animation {
+        animation: float 3s ease-in-out infinite;
       }
     </style>
   <script type="importmap">
