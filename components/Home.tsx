@@ -1,12 +1,12 @@
 
 import React from 'react';
-import { ReadingDay, UserProgress } from '../types';
-import { CheckCircle, Circle, Quote, BookOpen } from 'lucide-react';
+import { ReadingDay, User } from '../types';
+import { CheckCircle, Circle, Quote, BookOpen, Share2 } from 'lucide-react';
 import { MOTIVATIONAL_MESSAGES } from '../constants';
 
 interface HomeProps {
   todayReading: ReadingDay;
-  progress: UserProgress;
+  progress: User;
   onToggleComplete: (id: string) => void;
 }
 
@@ -20,72 +20,87 @@ const HomeView: React.FC<HomeProps> = ({ todayReading, progress, onToggleComplet
     return new Intl.DateTimeFormat('pt-BR', { 
       weekday: 'long', 
       day: 'numeric', 
-      month: 'long',
-      year: 'numeric'
+      month: 'long'
     }).format(date);
   };
 
   const currentWeek = Math.ceil(todayReading.dayOfYear / 7);
 
   return (
-    <div className="flex flex-col gap-8 animate-in fade-in duration-500">
-      <section>
-        <div className="flex justify-between items-end mb-1">
-          <p className="text-gray-500 text-xs font-medium uppercase tracking-widest">
+    <div className="flex flex-col gap-6 animate-in fade-in duration-700">
+      <section className="flex justify-between items-start">
+        <div>
+          <p className="text-[#556B2F] text-xs font-bold uppercase tracking-[0.2em] mb-1">
             {formatDate(todayReading.date)}
           </p>
-          <span className="bg-[#556B2F]/10 text-[#556B2F] px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-tighter">
-            Semana {currentWeek}
-          </span>
+          <h2 className="text-4xl font-serif font-bold text-[#3D3D3D]">Hoje</h2>
         </div>
-        <h2 className="text-4xl font-serif font-bold text-[#3D3D3D]">Leitura de Hoje</h2>
+        <div className="bg-[#556B2F] text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+          Semana {currentWeek}
+        </div>
       </section>
 
-      <div className="bg-white rounded-3xl p-8 shadow-sm border border-[#E8E1D5] relative overflow-hidden">
-        <div className="absolute -top-4 -right-4 p-4 opacity-[0.03]">
-          <BookOpen size={160} className="text-[#556B2F]" />
+      <div className={`bg-white rounded-[2.5rem] p-8 shadow-xl shadow-black/[0.03] border border-[#E8E1D5] relative overflow-hidden transition-all duration-500 ${isCompleted ? 'ring-2 ring-[#556B2F]' : ''}`}>
+        <div className="absolute -top-10 -right-10 p-4 opacity-[0.03]">
+          <BookOpen size={200} className="text-[#556B2F]" />
         </div>
         
         <div className="relative z-10">
-          <p className="text-[#556B2F] text-xs font-bold uppercase tracking-widest mb-4 opacity-70">Metas da Semana</p>
+          <div className="flex items-center gap-2 mb-6">
+            <span className="w-8 h-px bg-[#D4AF37]"></span>
+            <p className="text-[#556B2F] text-[10px] font-bold uppercase tracking-widest">Plano de Leitura</p>
+          </div>
           
-          <div className="flex flex-col gap-3 mb-10">
+          <div className="flex flex-col gap-4 mb-10">
             {todayReading.chapters.map((chunk, idx) => (
-              <div key={idx} className="flex items-center gap-3">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]"></div>
-                <p className="text-2xl font-serif text-[#3D3D3D] leading-tight">{chunk}</p>
+              <div key={idx} className="group flex items-start gap-4">
+                <div className="mt-2 w-2 h-2 rounded-full bg-[#D4AF37] group-hover:scale-125 transition-transform"></div>
+                <p className="text-2xl font-serif text-[#3D3D3D] leading-tight font-semibold">{chunk}</p>
               </div>
             ))}
           </div>
           
           <button 
             onClick={() => onToggleComplete(todayReading.id)}
-            className={`w-full py-4 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 transform active:scale-95 shadow-sm ${
+            className={`w-full py-5 rounded-2xl flex items-center justify-center gap-3 transition-all duration-500 transform active:scale-95 shadow-lg ${
               isCompleted 
-              ? 'bg-[#556B2F] text-white shadow-[#556B2F]/20' 
-              : 'bg-white border-2 border-[#556B2F] text-[#556B2F] hover:bg-[#556B2F]/5'
+              ? 'bg-[#556B2F] text-white shadow-[#556B2F]/30' 
+              : 'bg-white border-2 border-[#556B2F] text-[#556B2F] hover:bg-[#556B2F]/5 shadow-gray-200/50'
             }`}
           >
-            {isCompleted ? <CheckCircle size={22} /> : <Circle size={22} />}
-            <span className="font-semibold">{isCompleted ? 'Leitura Concluída' : 'Marcar como lida'}</span>
+            {isCompleted ? <CheckCircle size={24} strokeWidth={2.5} /> : <Circle size={24} strokeWidth={2.5} />}
+            <span className="font-bold tracking-wide">{isCompleted ? 'Concluído' : 'Marcar como Lido'}</span>
           </button>
         </div>
       </div>
 
-      <div className="bg-[#556B2F]/5 rounded-3xl p-8 border border-[#556B2F]/10 italic text-[#556B2F]">
-        <Quote className="mb-4 opacity-40" size={32} />
-        <p className="text-lg leading-relaxed font-serif">
-          "{randomQuote}"
-        </p>
-        <p className="mt-4 text-xs font-bold uppercase tracking-widest opacity-60">— Permaneça na Palavra</p>
+      <div className="bg-[#556B2F]/5 rounded-[2rem] p-8 border border-[#556B2F]/10 relative group">
+        <Quote className="absolute top-6 left-6 opacity-10 text-[#556B2F]" size={40} />
+        <div className="relative z-10">
+          <p className="text-xl leading-relaxed font-serif text-[#556B2F] text-center mb-4">
+            "{randomQuote}"
+          </p>
+          <div className="flex justify-center">
+            <div className="h-0.5 w-12 bg-[#D4AF37]/30"></div>
+          </div>
+        </div>
       </div>
       
-      {!progress.name && (
-        <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100 text-amber-800 text-xs leading-relaxed flex items-start gap-3">
-          <span className="text-lg">💡</span>
-          <span>Dica: Registre seu nome no <strong>Perfil</strong> para acompanhar seu progresso anual detalhado.</span>
-        </div>
-      )}
+      <button 
+        className="flex items-center justify-center gap-2 text-gray-400 text-xs font-medium py-4 hover:text-[#556B2F] transition-colors"
+        onClick={() => {
+          if (navigator.share) {
+            navigator.share({
+              title: 'Reading Saves',
+              text: `Minha leitura de hoje: ${todayReading.reading}`,
+              url: window.location.href
+            });
+          }
+        }}
+      >
+        <Share2 size={14} />
+        Compartilhar progresso
+      </button>
     </div>
   );
 };

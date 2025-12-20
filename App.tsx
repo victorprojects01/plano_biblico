@@ -10,12 +10,22 @@ import { generate2026Plan } from './constants';
 import { storageService } from './services/storageService';
 
 const App: React.FC = () => {
-  const [currentUser, setCurrentUser] = React.useState<User | null>(() => storageService.getCurrentUser());
+  const [currentUser, setCurrentUser] = React.useState<User | null>(null);
+  const [isInitializing, setIsInitializing] = React.useState(true);
   const [activeView, setActiveView] = React.useState<ViewState>('home');
   
   const plan = React.useMemo(() => generate2026Plan(), []);
 
-  // Determine today's reading in the context of 2026
+  React.useEffect(() => {
+    // Simula carregamento de sessão para suavizar entrada
+    const timer = setTimeout(() => {
+      const user = storageService.getCurrentUser();
+      setCurrentUser(user);
+      setIsInitializing(false);
+    }, 1200);
+    return () => clearTimeout(timer);
+  }, []);
+
   const getTodayId = () => {
     const today = new Date();
     const d2026 = new Date(2026, today.getMonth(), today.getDate());
@@ -51,6 +61,15 @@ const App: React.FC = () => {
   const handleDayClickInCalendar = (day: ReadingDay) => {
     toggleComplete(day.id);
   };
+
+  if (isInitializing) {
+    return (
+      <div className="min-h-screen bg-[#FDFBF7] flex flex-col items-center justify-center p-6 max-w-md mx-auto">
+        <div className="w-16 h-16 border-4 border-[#556B2F] border-t-transparent rounded-full animate-spin mb-6"></div>
+        <h1 className="text-2xl font-serif font-bold text-[#556B2F] animate-pulse">Reading Saves</h1>
+      </div>
+    );
+  }
 
   if (!currentUser) {
     return <AuthView onLogin={handleLogin} />;
