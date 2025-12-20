@@ -7,6 +7,7 @@
     <meta name="theme-color" content="#556B2F" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="description" content="Um plano de leitura bíblica anual para 2026 com foco em simplicidade e constância." />
     <title>Reading Saves - Plano 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,7 +31,6 @@
       .safe-bottom {
         padding-bottom: env(safe-area-inset-bottom);
       }
-      /* Custom scrollbar for desktop preview */
       ::-webkit-scrollbar {
         width: 6px;
       }
@@ -41,22 +41,22 @@
         background: #E8E1D5;
         border-radius: 10px;
       }
-      .perspective-card {
-        perspective: 1000px;
-      }
     </style>
-    <script type="importmap">
-    {
-      "imports": {
-        "lucide-react": "https://esm.sh/lucide-react@^0.474.0",
-        "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-        "react": "https://esm.sh/react@^19.2.3",
-        "react/": "https://esm.sh/react@^19.2.3/"
-      }
-    }
-    </script>
-  </head>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "vite": "https://esm.sh/vite@^7.3.0",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
+  }
+}
+</script>
+</head>
   <body>
     <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
   </body>
 </html>
