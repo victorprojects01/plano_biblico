@@ -7,9 +7,16 @@ export interface ReadingDay {
   chapters: string[];
 }
 
+export interface User {
+  email: string;
+  name: string;
+  password?: string; // Optional for this simulation
+  completedDays: string[]; // List of IDs (YYYY-MM-DD)
+}
+
 export interface UserProgress {
   name: string;
-  completedDays: string[]; // List of IDs (YYYY-MM-DD)
+  completedDays: string[];
 }
 
 export type ViewState = 'home' | 'calendar' | 'profile';

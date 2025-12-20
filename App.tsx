@@ -4,20 +4,20 @@ import Layout from './components/Layout';
 import HomeView from './components/Home';
 import CalendarView from './components/CalendarView';
 import ProfileView from './components/ProfileView';
-import { ViewState, UserProgress, ReadingDay } from './types';
+import AuthView from './components/AuthView';
+import { ViewState, ReadingDay, User } from './types';
 import { generate2026Plan } from './constants';
 import { storageService } from './services/storageService';
 
 const App: React.FC = () => {
+  const [currentUser, setCurrentUser] = React.useState<User | null>(() => storageService.getCurrentUser());
   const [activeView, setActiveView] = React.useState<ViewState>('home');
-  const [progress, setProgress] = React.useState<UserProgress>(() => storageService.loadProgress());
   
   const plan = React.useMemo(() => generate2026Plan(), []);
 
   // Determine today's reading in the context of 2026
   const getTodayId = () => {
     const today = new Date();
-    // For demo/consistency, we map current month/day to 2026
     const d2026 = new Date(2026, today.getMonth(), today.getDate());
     return d2026.toISOString().split('T')[0];
   };
@@ -25,56 +25,57 @@ const App: React.FC = () => {
   const todayId = getTodayId();
   const todayReading = plan[todayId] || plan['2026-01-01'];
 
-  const toggleComplete = (id: string) => {
-    setProgress(prev => {
-      const isCompleted = prev.completedDays.includes(id);
-      const newCompleted = isCompleted 
-        ? prev.completedDays.filter(dayId => dayId !== id)
-        : [...prev.completedDays, id];
-      
-      const newProgress = { ...prev, completedDays: newCompleted };
-      storageService.saveProgress(newProgress);
-      return newProgress;
-    });
+  const handleLogin = (user: User) => {
+    setCurrentUser(user);
   };
 
-  const updateName = (name: string) => {
-    setProgress(prev => {
-      const newProgress = { ...prev, name };
-      storageService.saveProgress(newProgress);
-      return newProgress;
-    });
+  const handleLogout = () => {
+    storageService.setSession(null);
+    setCurrentUser(null);
+    setActiveView('home');
+  };
+
+  const toggleComplete = (id: string) => {
+    if (!currentUser) return;
+
+    const isCompleted = currentUser.completedDays.includes(id);
+    const newCompleted = isCompleted 
+      ? currentUser.completedDays.filter(dayId => dayId !== id)
+      : [...currentUser.completedDays, id];
+    
+    const updatedUser = { ...currentUser, completedDays: newCompleted };
+    setCurrentUser(updatedUser);
+    storageService.saveUser(updatedUser);
   };
 
   const handleDayClickInCalendar = (day: ReadingDay) => {
-    // If user clicks a day in calendar, we could either jump to Home with that date
-    // Or show a modal. For simplicity, we just toggle it in calendar or stay there.
-    // Let's just scroll to the day's detail (Mocked here as jump to home for that date if we wanted, 
-    // but the spec says "mark readings as concluded", so we'll just allow marking from home).
-    // Let's improve by allowing toggle directly in calendar or showing a small summary.
     toggleComplete(day.id);
   };
+
+  if (!currentUser) {
+    return <AuthView onLogin={handleLogin} />;
+  }
 
   return (
     <Layout activeView={activeView} onViewChange={setActiveView}>
       {activeView === 'home' && (
         <HomeView 
           todayReading={todayReading} 
-          progress={progress} 
+          progress={currentUser} 
           onToggleComplete={toggleComplete} 
         />
       )}
       {activeView === 'calendar' && (
         <CalendarView 
           plan={plan} 
-          progress={progress} 
+          progress={currentUser} 
           onDayClick={handleDayClickInCalendar} 
         />
       )}
       {activeView === 'profile' && (
         <ProfileView 
-          progress={progress} 
-          onUpdateName={updateName} 
+          user={currentUser} 
+          onLogout={handleLogout}
         />
       )}
     </Layout>

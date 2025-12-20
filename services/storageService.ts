@@ -1,22 +1,37 @@
 
-import { UserProgress } from '../types';
+import { User } from '../types';
 
-const STORAGE_KEY = 'reading_saves_v1';
+const USERS_KEY = 'reading_saves_users_v2';
+const SESSION_KEY = 'reading_saves_session_v2';
 
 export const storageService = {
-  saveProgress: (progress: UserProgress) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+  // Get all registered users
+  getUsers: (): Record<string, User> => {
+    const data = localStorage.getItem(USERS_KEY);
+    return data ? JSON.parse(data) : {};
   },
-  
-  loadProgress: (): UserProgress => {
-    const data = localStorage.getItem(STORAGE_KEY);
-    if (data) {
-      try {
-        return JSON.parse(data);
-      } catch (e) {
-        console.error("Failed to parse progress data", e);
-      }
+
+  // Save/Update a specific user
+  saveUser: (user: User) => {
+    const users = storageService.getUsers();
+    users[user.email.toLowerCase()] = user;
+    localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  },
+
+  // Set currently logged in user email
+  setSession: (email: string | null) => {
+    if (email) {
+      localStorage.setItem(SESSION_KEY, email.toLowerCase());
+    } else {
+      localStorage.removeItem(SESSION_KEY);
     }
-    return { name: '', completedDays: [] };
+  },
+
+  // Get current session user object
+  getCurrentUser: (): User | null => {
+    const email = localStorage.getItem(SESSION_KEY);
+    if (!email) return null;
+    const users = storageService.getUsers();
+    return users[email] || null;
   }
 };
