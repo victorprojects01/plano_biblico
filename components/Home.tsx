@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ReadingDay, User } from '../types';
 import { CheckCircle2, Circle, Share2, Sparkles, TrendingUp } from 'lucide-react';
@@ -27,8 +26,8 @@ const HomeView: React.FC<HomeProps> = ({ todayReading, progress, onToggleComplet
     <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <header className="flex justify-between items-end">
         <div>
-          <h2 className="text-4xl font-extrabold text-slate-900 tracking-tight">Fala, {progress.name.split(' ')[0]}!</h2>
-          <p className="text-slate-400 font-medium">Bora pra leitura de hoje?</p>
+          <h2 className="text-4xl font-extrabold text-slate-900 tracking-tight">Olá, {progress.name.split(' ')[0]}</h2>
+          <p className="text-slate-400 font-medium">Pronto para a leitura de hoje?</p>
         </div>
         <div className="bg-indigo-50 text-indigo-600 px-4 py-2 rounded-2xl text-xs font-bold border border-indigo-100 flex items-center gap-2">
           <TrendingUp size={14} />
@@ -47,7 +46,7 @@ const HomeView: React.FC<HomeProps> = ({ todayReading, progress, onToggleComplet
           <div className="flex items-center gap-2 mb-8">
             <Sparkles className={isCompleted ? 'text-indigo-400' : 'text-indigo-600'} size={20} />
             <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${isCompleted ? 'text-indigo-300' : 'text-indigo-600/60'}`}>
-              Missão do Dia
+              Leitura do Dia
             </span>
           </div>
 
@@ -69,7 +68,7 @@ const HomeView: React.FC<HomeProps> = ({ todayReading, progress, onToggleComplet
             }`}
           >
             {isCompleted ? <CheckCircle2 size={24} /> : <Circle size={24} />}
-            <span className="font-bold text-lg">{isCompleted ? 'Missão Cumprida!' : 'Concluir Agora'}</span>
+            <span className="font-bold text-lg">{isCompleted ? 'Leitura Concluída' : 'Marcar como Concluído'}</span>
           </button>
         </div>
       </div>
@@ -90,15 +89,15 @@ const HomeView: React.FC<HomeProps> = ({ todayReading, progress, onToggleComplet
         onClick={() => {
           if (navigator.share) {
             navigator.share({
-              title: 'Save. App',
-              text: `Minha leitura de hoje no Save: ${todayReading.reading}`,
+              title: 'Reading Saves',
+              text: `Minha leitura de hoje: ${todayReading.reading}`,
               url: window.location.href
             });
           }
         }}
       >
         <Share2 size={16} />
-        Compartilhar vibe
+        Compartilhar progresso
       </button>
     </div>
   );
