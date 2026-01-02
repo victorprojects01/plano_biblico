@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { ReadingDay, User } from '../types';
-import { CheckCircle2, Circle, Share2, Sparkles, TrendingUp } from 'lucide-react';
+import { CheckCircle2, Circle, Share2, Sparkles, TrendingUp, BookOpen } from 'lucide-react';
 import { MOTIVATIONAL_MESSAGES } from '../constants';
 
 interface HomeProps {
@@ -20,6 +20,8 @@ const HomeView: React.FC<HomeProps> = ({ todayReading, progress, onToggleComplet
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'short' }).format(date);
   };
+
+  const hasReading = todayReading.chapters.length > 0;
 
   return (
     <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -44,16 +46,27 @@ const HomeView: React.FC<HomeProps> = ({ todayReading, progress, onToggleComplet
           <div className="flex items-center gap-2 mb-8">
             <Sparkles className={isCompleted ? 'text-indigo-400' : 'text-indigo-600'} size={18} />
             <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${isCompleted ? 'text-indigo-300' : 'text-indigo-600/60'}`}>
-              Leitura de Hoje
+              {hasReading ? 'Leitura de Hoje' : 'Momento de Preparação'}
             </span>
           </div>
 
           <div className="space-y-3 mb-10">
-            {todayReading.chapters.map((chunk, idx) => (
-              <h3 key={idx} className="text-3xl font-extrabold tracking-tighter leading-tight">
-                {chunk}
-              </h3>
-            ))}
+            {hasReading ? (
+              todayReading.chapters.map((chunk, idx) => (
+                <h3 key={idx} className="text-3xl font-extrabold tracking-tighter leading-tight">
+                  {chunk}
+                </h3>
+              ))
+            ) : (
+              <div className="flex flex-col gap-2">
+                <h3 className="text-3xl font-extrabold tracking-tighter leading-tight text-indigo-600">
+                  {todayReading.reading}
+                </h3>
+                <p className={`text-sm font-medium ${isCompleted ? 'text-slate-400' : 'text-slate-500'}`}>
+                  Aproveite para organizar seu local de leitura e preparar o coração para o plano de 2026.
+                </p>
+              </div>
+            )}
           </div>
 
           <button 
@@ -64,8 +77,10 @@ const HomeView: React.FC<HomeProps> = ({ todayReading, progress, onToggleComplet
               : 'bg-indigo-600 text-white shadow-indigo-200'
             }`}
           >
-            {isCompleted ? <CheckCircle2 size={22} /> : <Circle size={22} />}
-            <span className="font-bold text-lg">{isCompleted ? 'Leitura Concluída' : 'Marcar como Lido'}</span>
+            {isCompleted ? <CheckCircle2 size={22} /> : (hasReading ? <Circle size={22} /> : <BookOpen size={22} />)}
+            <span className="font-bold text-lg">
+              {isCompleted ? 'Concluído' : (hasReading ? 'Marcar como Lido' : 'Concluir Preparação')}
+            </span>
           </button>
         </div>
       </div>
@@ -84,7 +99,7 @@ const HomeView: React.FC<HomeProps> = ({ todayReading, progress, onToggleComplet
           if (navigator.share) {
             navigator.share({
               title: 'Save - Plano de Leitura',
-              text: `Minha leitura bíblica de hoje: ${todayReading.reading}`,
+              text: hasReading ? `Minha leitura bíblica de hoje: ${todayReading.reading}` : `Estou iniciando minha jornada no Save! Hoje é dia de preparação.`,
               url: window.location.href
             });
           }

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { BiblePlanData, UserProgress, ReadingDay } from '../types';
-import { Check, ChevronLeft, ChevronRight, Zap, Star } from 'lucide-react';
+import { Check, ChevronLeft, ChevronRight, Zap, Star, Coffee } from 'lucide-react';
 
 interface CalendarViewProps {
   plan: BiblePlanData;
@@ -110,7 +110,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ plan, progress, onDayClick 
       {selectedDay ? (
         <div className="bg-slate-900 text-white p-8 rounded-[2.5rem] shadow-2xl animate-in zoom-in-95 duration-300 relative overflow-hidden">
           <div className="absolute top-0 right-0 p-6 opacity-10">
-            <Star size={80} fill="currentColor" />
+            {selectedDay.chapters.length > 0 ? <Star size={80} fill="currentColor" /> : <Coffee size={80} fill="currentColor" />}
           </div>
           
           <div className="relative z-10">
@@ -119,7 +119,9 @@ const CalendarView: React.FC<CalendarViewProps> = ({ plan, progress, onDayClick 
                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400 block mb-1">
                   {new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'long' }).format(selectedDay.date)}
                 </span>
-                <h4 className="text-2xl font-extrabold tracking-tight">Leitura do Dia</h4>
+                <h4 className="text-2xl font-extrabold tracking-tight">
+                  {selectedDay.chapters.length > 0 ? 'Leitura do Dia' : 'Preparação'}
+                </h4>
               </div>
               <button 
                 onClick={() => onDayClick(selectedDay)}
@@ -134,14 +136,23 @@ const CalendarView: React.FC<CalendarViewProps> = ({ plan, progress, onDayClick 
             </div>
             
             <div className="space-y-2 mb-4">
-              {selectedDay.chapters.map((chunk, i) => (
-                <div key={i} className="flex items-center gap-3">
-                   <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full"></div>
-                   <p className="text-xl font-bold text-slate-100">{chunk}</p>
+              {selectedDay.chapters.length > 0 ? (
+                selectedDay.chapters.map((chunk, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full"></div>
+                    <p className="text-xl font-bold text-slate-100">{chunk}</p>
+                  </div>
+                ))
+              ) : (
+                <div className="flex items-center gap-3">
+                  <div className="w-1.5 h-1.5 bg-pink-500 rounded-full"></div>
+                  <p className="text-xl font-bold text-slate-100 italic">{selectedDay.reading}</p>
                 </div>
-              ))}
+              )}
             </div>
-            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Toque no ícone ao lado para concluir</p>
+            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">
+              {selectedDay.chapters.length > 0 ? 'Toque no ícone para concluir' : 'Toque para marcar como concluído'}
+            </p>
           </div>
         </div>
       ) : (

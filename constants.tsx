@@ -52,8 +52,9 @@ const BIBLE_BOOKS = [
 ];
 
 /**
- * Gera o plano de leitura para o ano de 2026, distribuindo todos os capítulos da Bíblia em 365 dias.
- * Fixes the error in App.tsx: Module '"./constants"' has no exported member 'generate2026Plan'.
+ * Gera o plano de leitura para 2026.
+ * Os dias 01/01 e 02/01 são dias de preparação.
+ * A leitura começa em 03/01 redistribuindo os 1189 capítulos nos 363 dias restantes.
  */
 export const generate2026Plan = (): BiblePlanData => {
   const plan: BiblePlanData = {};
@@ -66,9 +67,15 @@ export const generate2026Plan = (): BiblePlanData => {
     const id = date.toISOString().split('T')[0];
     const dayChapters: string[] = [];
     
-    // 1189 capítulos / 365 dias ~= 3.25 capítulos/dia
-    // Distribuímos para que alguns dias tenham 4 e outros 3 capítulos
-    const chaptersToday = day <= 94 ? 4 : 3;
+    // Redistribuição: 
+    // Dias 1 e 2: Preparação (0 capítulos)
+    // Dias 3 a 102 (100 dias): 4 capítulos/dia = 400 capítulos
+    // Dias 103 a 365 (263 dias): 3 capítulos/dia = 789 capítulos
+    // Total: 0 + 400 + 789 = 1189 capítulos (Toda a Bíblia)
+    let chaptersToday = 0;
+    if (day > 2) {
+      chaptersToday = day <= 102 ? 4 : 3;
+    }
     
     for (let c = 0; c < chaptersToday; c++) {
       if (currentBookIndex >= BIBLE_BOOKS.length) break;
@@ -87,7 +94,7 @@ export const generate2026Plan = (): BiblePlanData => {
       id,
       dayOfYear: day,
       date,
-      reading: dayChapters.join(', '),
+      reading: dayChapters.length > 0 ? dayChapters.join(', ') : "Dia de Preparação",
       chapters: dayChapters
     };
   }
