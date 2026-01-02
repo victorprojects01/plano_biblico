@@ -1,37 +1,57 @@
 
-import { User } from '../types';
-
-const USERS_KEY = 'reading_saves_users_v2';
-const SESSION_KEY = 'reading_saves_session_v2';
+import { supabase } from '../lib/supabase';
 
 export const storageService = {
-  // Get all registered users
-  getUsers: (): Record<string, User> => {
-    const data = localStorage.getItem(USERS_KEY);
-    return data ? JSON.parse(data) : {};
-  },
+  // Busca o progresso de leitura do banco
+  getReadingProgress: async (userId: string): Promise<string[]> => {
+    const { data, error } = await supabase
+      .from('reading_progress')
+      .select('reading_day_id')
+      .eq('user_id', userId);
 
-  // Save/Update a specific user
-  saveUser: (user: User) => {
-    const users = storageService.getUsers();
-    users[user.email.toLowerCase()] = user;
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
-  },
-
-  // Set currently logged in user email
-  setSession: (email: string | null) => {
-    if (email) {
-      localStorage.setItem(SESSION_KEY, email.toLowerCase());
-    } else {
-      localStorage.removeItem(SESSION_KEY);
+    if (error) {
+      console.error('Erro ao buscar progresso:', error);
+      return [];
     }
+
+    return data.map(item => item.reading_day_id);
   },
 
-  // Get current session user object
-  getCurrentUser: (): User | null => {
-    const email = localStorage.getItem(SESSION_KEY);
-    if (!email) return null;
-    const users = storageService.getUsers();
-    return users[email] || null;
+  // Salva a conclusão de um dia
+  completeDay: async (userId: string, dayId: string) => {
+    const { error } = await supabase
+      .from('reading_progress')
+      .upsert({ 
+        user_id: userId, 
+        reading_day_id: dayId 
+      }, { onConflict: 'user_id, reading_day_id' });
+    
+    if (error) throw error;
+  },
+
+  // Remove a conclusão de um dia
+  uncompleteDay: async (userId: string, dayId: string) => {
+    const { error } = await supabase
+      .from('reading_progress')
+      .delete()
+      .eq('user_id', userId)
+      .eq('reading_day_id', dayId);
+    
+    if (error) throw error;
+  },
+
+  // Busca dados do perfil do usuário
+  getProfile: async (userId: string) => {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
+    
+    if (error) {
+      console.error('Erro ao buscar perfil:', error);
+      return null;
+    }
+    return data;
   }
 };

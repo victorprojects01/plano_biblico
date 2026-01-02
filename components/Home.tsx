@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ReadingDay, User } from '../types';
 import { CheckCircle2, Circle, Share2, Sparkles, TrendingUp } from 'lucide-react';
@@ -11,92 +12,85 @@ interface HomeProps {
 
 const HomeView: React.FC<HomeProps> = ({ todayReading, progress, onToggleComplete }) => {
   const isCompleted = progress.completedDays.includes(todayReading.id);
+
   const randomQuote = React.useMemo(() => {
     return MOTIVATIONAL_MESSAGES[todayReading.dayOfYear % MOTIVATIONAL_MESSAGES.length];
   }, [todayReading.dayOfYear]);
 
   const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('pt-BR', { 
-      day: 'numeric', 
-      month: 'short'
-    }).format(date);
+    return new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'short' }).format(date);
   };
 
   return (
     <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <header className="flex justify-between items-end">
         <div>
-          <h2 className="text-4xl font-extrabold text-slate-900 tracking-tight">Olá, {progress.name.split(' ')[0]}</h2>
-          <p className="text-slate-400 font-medium">Pronto para a leitura de hoje?</p>
+          <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">Olá, {progress.name.split(' ')[0]}</h2>
+          <p className="text-slate-400 font-medium text-sm">Sua jornada espiritual continua.</p>
         </div>
-        <div className="bg-indigo-50 text-indigo-600 px-4 py-2 rounded-2xl text-xs font-bold border border-indigo-100 flex items-center gap-2">
-          <TrendingUp size={14} />
+        <div className="bg-indigo-50 text-indigo-600 px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-indigo-100 flex items-center gap-2">
+          <TrendingUp size={12} />
           {formatDate(todayReading.date)}
         </div>
       </header>
 
-      {/* Card de Leitura Principal */}
-      <div className={`relative group overflow-hidden rounded-[2.5rem] p-8 transition-all duration-500 transform ${
-        isCompleted ? 'bg-slate-900 text-white' : 'bg-white shadow-xl shadow-indigo-100/50'
+      {/* Hero Card */}
+      <div className={`relative overflow-hidden rounded-[2.5rem] p-8 transition-all duration-500 ${
+        isCompleted ? 'bg-slate-900 text-white' : 'bg-white shadow-xl shadow-indigo-100/40 border border-indigo-50/50'
       }`}>
-        {/* Glow Decorativo */}
-        <div className="absolute -top-20 -right-20 w-48 h-48 bg-indigo-500/20 blur-[80px] rounded-full"></div>
+        <div className="absolute -top-10 -right-10 w-40 h-40 bg-indigo-500/10 blur-3xl rounded-full"></div>
         
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-8">
-            <Sparkles className={isCompleted ? 'text-indigo-400' : 'text-indigo-600'} size={20} />
+            <Sparkles className={isCompleted ? 'text-indigo-400' : 'text-indigo-600'} size={18} />
             <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${isCompleted ? 'text-indigo-300' : 'text-indigo-600/60'}`}>
-              Leitura do Dia
+              Leitura de Hoje
             </span>
           </div>
 
-          <div className="space-y-4 mb-10">
+          <div className="space-y-3 mb-10">
             {todayReading.chapters.map((chunk, idx) => (
-              <div key={idx} className="flex items-center gap-4">
-                <div className={`w-1.5 h-6 rounded-full ${isCompleted ? 'bg-indigo-400' : 'bg-indigo-600'}`}></div>
-                <h3 className="text-3xl font-extrabold tracking-tight leading-tight">{chunk}</h3>
-              </div>
+              <h3 key={idx} className="text-3xl font-extrabold tracking-tighter leading-tight">
+                {chunk}
+              </h3>
             ))}
           </div>
 
           <button 
             onClick={() => onToggleComplete(todayReading.id)}
-            className={`w-full py-5 rounded-3xl flex items-center justify-center gap-3 transition-all duration-300 active:scale-95 btn-glow ${
+            className={`w-full py-5 rounded-[2rem] flex items-center justify-center gap-3 transition-all duration-300 active:scale-95 shadow-lg ${
               isCompleted 
-              ? 'bg-gradient-to-r from-emerald-400 to-emerald-500 text-white' 
-              : 'bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] text-white'
+              ? 'bg-emerald-500 text-white shadow-emerald-200' 
+              : 'bg-indigo-600 text-white shadow-indigo-200'
             }`}
           >
-            {isCompleted ? <CheckCircle2 size={24} /> : <Circle size={24} />}
-            <span className="font-bold text-lg">{isCompleted ? 'Leitura Concluída' : 'Marcar como Concluído'}</span>
+            {isCompleted ? <CheckCircle2 size={22} /> : <Circle size={22} />}
+            <span className="font-bold text-lg">{isCompleted ? 'Leitura Concluída' : 'Marcar como Lido'}</span>
           </button>
         </div>
       </div>
 
-      {/* Card de Quote / Insights */}
-      <div className="bg-gradient-to-br from-slate-800 to-slate-950 rounded-[2rem] p-6 text-white relative overflow-hidden group">
-        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:rotate-12 transition-transform duration-500">
-          <Sparkles size={80} />
-        </div>
-        <p className="text-lg font-semibold leading-relaxed relative z-10 mb-4 italic text-slate-200">
+      {/* Quote Card */}
+      <div className="bg-white border border-slate-100 rounded-[2rem] p-6 shadow-sm text-slate-500">
+        <p className="text-sm font-semibold leading-relaxed mb-4 italic text-slate-600">
           "{randomQuote}"
         </p>
-        <div className="w-10 h-1 bg-indigo-500 rounded-full"></div>
+        <div className="w-8 h-1 bg-indigo-200 rounded-full"></div>
       </div>
 
       <button 
-        className="flex items-center justify-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-widest py-4 hover:text-indigo-600 transition-colors"
+        className="flex items-center justify-center gap-2 text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] py-4 hover:text-indigo-600 transition-colors"
         onClick={() => {
           if (navigator.share) {
             navigator.share({
-              title: 'Reading Saves',
-              text: `Minha leitura de hoje: ${todayReading.reading}`,
+              title: 'Save - Plano de Leitura',
+              text: `Minha leitura bíblica de hoje: ${todayReading.reading}`,
               url: window.location.href
             });
           }
         }}
       >
-        <Share2 size={16} />
+        <Share2 size={14} />
         Compartilhar progresso
       </button>
     </div>
